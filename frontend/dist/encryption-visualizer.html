@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryVault Pro - Encryption Visualizer</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/framer-motion@10.16.0/dist/framer-motion.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      color: white;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+    h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #22d3ee, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      font-size: 18px;
+      color: #9ca3af;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .steps-container {
+      margin-bottom: 48px;
+    }
+    .steps-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 48px;
+    }
+    .steps-line::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #374151;
+      transform: translateY(-50%);
+      border-radius: 2px;
+    }
+    .progress-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899);
+      transform: translateY(-50%);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    .step {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    .step.inactive { opacity: 0.4; }
+    .step-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      background: #1f2937;
+    }
+    .step.active .step-icon {
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
+      50% { transform: scale(1.02); box-shadow: 0 0 30px rgba(139, 92, 246, 0.7); }
+    }
+    .step-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      max-width: 100px;
+    }
+    .step.active .step-label { color: white; }
+    .step:not(.active) .step-label { color: #6b7280; }
+    
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .glass-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .visualization-panel {
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+    .info-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .step-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .btn-lg { padding: 16px 32px; font-size: 16px; }
+    
+    .icon-box {
+      width: 96px;
+      height: 96px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .icon-box svg { width: 48px; height: 48px; color: white; }
+    
+    .code-block {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      text-align: left;
+      width: 100%;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .code-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #a78bfa;
+    }
+    
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    .feature-icon-small {
+      width: 20px;
+      height: 20px;
+      color: #10b981;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .feature-title {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .feature-desc {
+      font-size: 12px;
+      color: #6b7280;
+    }
+    
+    .success-box {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    
+    .tee-box {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(249, 115, 22, 0.2));
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+    .tee-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: #f59e0b;
+    }
+    .tee-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #f59e0b;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .hidden { display: none; }
+    
+    @media (max-width: 968px) {
+      .content-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+      .step-label { font-size: 10px; max-width: 70px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { motion, AnimatePresence } = window.Motion;
+    
+    // Lucide icons as React components
+    const Shield = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    );
+    const Lock = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    );
+    const Cpu = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="16" height="16" x="4" y="4" rx="2"/>
+        <rect width="6" height="6" x="9" y="9" rx="1"/>
+        <path d="M15 2v2"/><path d="M15 20v2"/>
+        <path d="M2 15h2"/><path d="M2 9h2"/>
+        <path d="M20 15h2"/><path d="M20 9h2"/>
+        <path d="M9 2v2"/><path d="M9 20v2"/>
+      </svg>
+    );
+    const Database = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+        <path d="M3 5V19A9 3 0 0 0 21 19V5"/>
+        <path d="M3 12A9 3 0 0 0 21 12"/>
+      </svg>
+    );
+    const Globe = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+        <path d="M2 12h20"/>
+      </svg>
+    );
+    const FileText = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" x2="8" y1="13" y2="13"/>
+        <line x1="16" x2="8" y1="17" y2="17"/>
+        <line x1="10" x2="8" y1="9" y2="9"/>
+      </svg>
+    );
+    const Key = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="7.5" cy="15.5" r="5.5"/>
+        <path d="m21 2-9.6 9.6"/>
+        <path d="m15.5 7.5 3 3L22 7l-3-3"/>
+      </svg>
+    );
+    const CheckCircle = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    );
+    const RefreshCw = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+        <path d="M21 3v5h-5"/>
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+        <path d="M8 16H3v5"/>
+      </svg>
+    );
+    const Copy = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+      </svg>
+    );
+    const Check = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    );
+    const Clock = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    );
+    const Eye = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    );
+    const EyeOff = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/>
+        <line x1="2" x2="22" y1="2" y2="22"/>
+      </svg>
+    );
+    
+    const steps = [
+      { title: 'Raw Memory Data', icon: FileText, desc: 'Original conversation memory from AI agent', color: 'linear-gradient(135deg, #3b82f6, #06b6d4)' },
+      { title: 'Client-Side Encryption', icon: Lock, desc: 'AES-256-GCM encryption in browser', color: 'linear-gradient(135deg, #8b5cf6, #ec4899)' },
+      { title: 'TEE Key Generation', icon: Cpu, desc: 'Keys generated in secure enclave', color: 'linear-gradient(135deg, #f59e0b, #f97316)' },
+      { title: 'IPFS Storage', icon: Database, desc: 'Encrypted blob stored on Filecoin', color: 'linear-gradient(135deg, #10b981, #14b8a6)' },
+      { title: 'Blockchain Registry', icon: Globe, desc: 'CID hash registered on Base', color: 'linear-gradient(135deg, #6366f1, #8b5cf6)' },
+      { title: 'Secure & Verified', icon: Shield, desc: 'Memory is tamper-proof and private', color: 'linear-gradient(135deg, #f43f5e, #ef4444)' }
+    ];
+    
+    const sampleMemory = {
+      timestamp: new Date().toISOString(),
+      agent: 'assistant-0x7a3f...8e2d',
+      conversation: [
+        { role: 'user', content: 'Help me plan a surprise party for my friend' },
+        { role: 'assistant', content: 'I\'d be happy to help! What\'s the occasion?' },
+      ],
+      context: { userPreferences: ['surprise parties'] }
+    };
+    
+    function App() {
+      const [step, setStep] = useState(0);
+      const [isAnimating, setIsAnimating] = useState(false);
+      const [showRawData, setShowRawData] = useState(false);
+      const [copied, setCopied] = useState(false);
+      const [encryptionKey, setEncryptionKey] = useState('');
+      const [encryptedData, setEncryptedData] = useState('');
+      const [cid, setCid] = useState('');
+      const [txHash, setTxHash] = useState('');
+      
+      const generateKey = () => {
+        const chars = '0123456789abcdef';
+        let key = '0x';
+        for (let i = 0; i < 64; i++) key += chars[Math.floor(Math.random() * chars.length)];
+        return key;
+      };
+      
+      const generateEncryptedData = () => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        let data = '';
+        for (let i = 0; i < 256; i++) data += chars[Math.floor(Math.random() * chars.length)];
+        return data;
+      };
+      
+      const generateCID = () => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        return `Qm${Array(44).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join('')}`;
+      };
+      
+      const generateTxHash = () => {
+        const chars = '0123456789abcdef';
+        return `0x${Array(64).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join('')}`;
+      };
+      
+      const startDemo = () => {
+        setIsAnimating(true);
+        setStep(1);
+        setEncryptionKey(generateKey());
+        setEncryptedData(generateEncryptedData());
+        setCid(generateCID());
+        setTxHash(generateTxHash());
+        
+        setTimeout(() => setStep(2), 2500);
+        setTimeout(() => setStep(3), 5000);
+        setTimeout(() => setStep(4), 7500);
+        setTimeout(() => setStep(5), 10000);
+        setTimeout(() => { setStep(6); setIsAnimating(false); }, 12500);
+      };
+      
+      const resetDemo = () => {
+        setStep(0);
+        setIsAnimating(false);
+        setEncryptionKey('');
+        setEncryptedData('');
+        setCid('');
+        setTxHash('');
+      };
+      
+      const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+      
+      return (
+        <div className="container">
+          <header className="header">
+            <div className="badge">
+              <span className="badge-dot"></span>
+              <span>Privacy-First Architecture</span>
+            </div>
+            <h1>Encryption Visualizer</h1>
+            <p className="subtitle">See how MemoryVault Pro protects your AI agent memories with end-to-end encryption and blockchain verification</p>
+          </header>
+          
+          <div className="steps-container">
+            <div className="steps-line">
+              <div className="progress-line" style={{ width: `${(step / (steps.length - 1)) * 100}%` }} ></div>
+              {steps.map((s, i) => {
+                const Icon = s.icon;
+                return (
+                  <div key={i} className={`step ${i <= step ? 'active' : 'inactive'}`} onClick={() => !isAnimating && setStep(i)}>
+                    <div className="step-icon" style={{ background: i <= step ? s.color : '#1f2937' }}>
+                      <Icon />
+                    </div>
+                    <span className="step-label">{s.title}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          <div className="content-grid">
+            <div className="glass-card visualization-panel">
+              {step === 0 && (
+                <div className="step-content">
+                  <div className="icon-box" style={{ background: steps[0].color }}>
+                    <FileText />
+                  </div>
+                  <h2>Ready to Encrypt</h2>
+                  <p style={{ color: '#9ca3af', marginBottom: '24px' }}>Click start to see the encryption flow</p>
+                  <button className="btn btn-primary btn-lg" onClick={startDemo} disabled={isAnimating}>
+                    {isAnimating ? 'Processing...' : 'Start Encryption Demo'}
+                  </button>
+                </div>
+              )}
+              
+              {step === 1 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ padding: '8px', background: 'rgba(59,130,246,0.2)', borderRadius: '8px' }}>
+                      <FileText />
+                    </div>
+                    <span style={{ fontWeight: 600 }}>Raw Memory Data</span>
+                  </div>
+                  
+                  <div className="code-block">
+                    <div className="code-header">
+                      <span style={{ color: '#6b7280' }}>// AI Agent Memory</span>
+                      <button onClick={() => setShowRawData(!showRawData)} style={{ background: 'none', border: 'none', color: '#22d3ee', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {showRawData ? <EyeOff /> : <Eye />}
+                        {showRawData ? 'Hide' : 'Show'} Content
+                      </button>
+                    </div>
+                    {showRawData ? (
+                      <pre style={{ color: '#4ade80', margin: 0 }}>{JSON.stringify(sampleMemory, null, 2)}</pre>
+                    ) : (
+                      <div style={{ color: '#6b7280', fontStyle: 'italic' }}>[Content hidden - click "Show Content" to view raw memory data]</div>
+                    )}
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '16px', fontSize: '14px', color: '#9ca3af' }}>
+                    <span>📦 Size: 1.2 KB</span>
+                    <span>🕐 Created: {new Date().toLocaleTimeString()}</span>
+                  </div>
+                </div>
+              )}
+              
+              {step === 2 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ padding: '8px', background: 'rgba(139,92,246,0.2)', borderRadius: '8px' }}>
+                      <Lock />
+                    </div>
+                    <span style={{ fontWeight: 600 }}>AES-256-GCM Encryption</span>
+                  </div>
+                  
+                  <div style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.2))', padding: '16px', borderRadius: '12px', border: '1px solid rgba(139,92,246,0.3)', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                      <Key />
+                      <span style={{ fontSize: '12px', color: '#fbbf24', fontFamily: 'monospace' }}>Encryption Key</span>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.5)', padding: '12px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '11px', color: '#d8b4fe', wordBreak: 'break-all' }}>
+                      {encryptionKey}
+                    </div>
+                    <button onClick={() => copyToClipboard(encryptionKey)} style={{ marginTop: '8px', background: 'none', border: 'none', color: '#9ca3af', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
+                      {copied ? <Check /> : <Copy />}
+                      {copied ? 'Copied!' : 'Copy Key'}
+                    </button>
+                  </div>
+                  
+                  <div className="code-block">
+                    <div className="code-label">
+                      <Lock />
+                      <span>Encrypted Output</span>
+                    </div>
+                    <div style={{ color: '#f9a8d4', wordBreak: 'break-all', fontSize: '11px' }}>
+                      {encryptedData.substring(0, 100)}...
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px', padding: '12px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid rgba(16,185,129,0.3)' }}>
+                    <CheckCircle />
+                    <span style={{ color: '#4ade80', fontSize: '14px' }}>256-bit encryption complete</span>
+                  </div>
+                </div>
+              )}
+              
+              {step === 3 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ padding: '8px', background: 'rgba(245,158,11,0.2)', borderRadius: '8px' }}>
+                      <Cpu />
+                    </div>
+                    <span style={{ fontWeight: 600 }}>TEE Secure Enclave</span>
+                  </div>
+                  
+                  <div className="tee-box">
+                    <div className="tee-badge">
+                      <div className="tee-badge-dot"></div>
+                      SECURE
+                    </div>
+                    
+                    <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                      <div style={{ width: '80px', height: '80px', margin: '0 auto 16px', background: steps[2].color, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Shield />
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                        <span style={{ color: '#9ca3af' }}>Enclave ID</span>
+                        <span style={{ fontFamily: 'monospace', color: '#fbbf24' }}>0x{Array(8).fill(0).map(() => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join('')}...</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                        <span style={{ color: '#9ca3af' }}>Attestation</span>
+                        <span style={{ color: '#4ade80', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Check /> Verified
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                        <span style={{ color: '#9ca3af' }}>Key Rotation</span>
+                        <span style={{ color: '#22d3ee' }}>Every 24h</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(245,158,11,0.1)', borderRadius: '8px', border: '1px solid rgba(245,158,11,0.3)' }}>
+                    <p style={{ fontSize: '12px', color: '#fcd34d' }}>
+                      <strong>TEE (Trusted Execution Environment):</strong> Keys are generated and managed in hardware-isolated secure enclaves. Even we cannot access your encryption keys.
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {step === 4 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ padding: '8px', background: 'rgba(16,185,129,0.2)', borderRadius: '8px' }}>
+                      <Database />
+                    </div>
+                    <span style={{ fontWeight: 600 }}>IPFS/Filecoin Storage</span>
+                  </div>
+                  
+                  <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(20,184,166,0.2))', padding: '16px', borderRadius: '12px', border: '1px solid rgba(16,185,129,0.3)', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                      <Globe />
+                      <span style={{ fontSize: '12px', color: '#34d399', fontFamily: 'monospace' }}>Content Identifier (CID)</span>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.5)', padding: '12px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '14px', color: '#6ee7b7', wordBreak: 'break-all' }}>
+                      {cid}
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: '700', color: '#34d399' }}>3</div>
+                      <div style={{ fontSize: '12px', color: '#6b7280' }}>Replicas</div>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: '700', color: '#22d3ee' }}>100+</div>
+                      <div style={{ fontSize: '12px', color: '#6b7280' }}>Years</div>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px', fontWeight: '700', color: '#a78bfa' }}>∞</div>
+                      <div style={{ fontSize: '12px', color: '#6b7280' }}>Retention</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#9ca3af' }}>
+                    <CheckCircle />
+                    <span>Stored on Filecoin with permanent persistence guarantee</span>
+                  </div>
+                </div>
+              )}
+              
+              {step === 5 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ padding: '8px', background: 'rgba(99,102,241,0.2)', borderRadius: '8px' }}>
+                      <Globe />
+                    </div>
+                    <span style={{ fontWeight: 600 }}>Base Sepolia Registry</span>
+                  </div>
+                  
+                  <div style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2))', padding: '16px', borderRadius: '12px', border: '1px solid rgba(99,102,241,0.3)', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                      <Database />
+                      <span style={{ fontSize: '12px', color: '#818cf8', fontFamily: 'monospace' }}>Transaction Hash</span>
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,0.5)', padding: '12px', borderRadius: '8px', fontFamily: 'monospace', fontSize: '11px', color: '#a5b4fc', wordBreak: 'break-all' }}>
+                      {txHash}
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                      <span style={{ fontSize: '14px', color: '#9ca3af' }}>Block Number</span>
+                      <span style={{ fontFamily: 'monospace', color: '#818cf8' }}>#{(8453200 + Math.floor(Math.random() * 1000)).toLocaleString()}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                      <span style={{ fontSize: '14px', color: '#9ca3af' }}>Gas Used</span>
+                      <span style={{ fontFamily: 'monospace', color: '#22d3ee' }}>{(85000 + Math.floor(Math.random() * 20000)).toLocaleString()} wei</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                      <span style={{ fontSize: '14px', color: '#9ca3af' }}>Confirmations</span>
+                      <span style={{ color: '#4ade80', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Check /> Finalized
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {step === 6 && (
+                <div className="step-content">
+                  <div className="icon-box" style={{ background: steps[5].color }}>
+                    <Shield />
+                  </div>
+                  <h2>Memory Secured!</h2>
+                  <p style={{ color: '#9ca3af', marginBottom: '24px' }}>Your memory is now encrypted and stored on-chain</p>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', width: '100%', maxWidth: '300px', marginBottom: '24px' }}>
+                    <div style={{ background: 'rgba(16,185,129,0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(16,185,129,0.3)', textAlign: 'center' }}>
+                      <Lock />
+                      <div style={{ marginTop: '8px', fontWeight: 500, color: '#4ade80' }}>Encrypted</div>
+                    </div>
+                    <div style={{ background: 'rgba(59,130,246,0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(59,130,246,0.3)', textAlign: 'center' }}>
+                      <Database />
+                      <div style={{ marginTop: '8px', fontWeight: 500, color: '#60a5fa' }}>On-Chain</div>
+                    </div>
+                  </div>
+                  
+                  <button className="btn btn-secondary" onClick={resetDemo}>
+                    <RefreshCw /> Run Again
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            <div className="info-panel">
+              <div className="glass-card">
+                <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '32px', height: '32px', background: steps[step]?.color || steps[0].color, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700' }}>
+                    {step + 1}
+                  </div>
+                  {steps[step]?.title || steps[0].title}
+                </h3>
+                <p style={{ color: '#9ca3af', marginBottom: '16px' }}>{steps[step]?.desc || steps[0].desc}</p>
+                
+                <div className="feature-list">
+                  {step === 0 && (
+                    <>
+                      <div className="feature-item">
+                        <CheckCircle className="feature-icon-small" />
+                        <div>
+                          <div className="feature-title">Client-Side Encryption</div>
+                          <div className="feature-desc">Data is encrypted before leaving your browser</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <CheckCircle className="feature-icon-small" />
+                        <div>
+                          <div className="feature-title">Zero-Knowledge Architecture</div>
+                          <div className="feature-desc">We never see your unencrypted data</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <CheckCircle className="feature-icon-small" />
+                        <div>
+                          <div className="feature-title">Blockchain Verification</div>
+                          <div className="feature-desc">Every memory is tamper-proof verified</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {step === 1 && (
+                    <>
+                      <div className="feature-item">
+                        <Database className="feature-icon-small" style={{ color: '#60a5fa' }} />
+                        <div>
+                          <div className="feature-title">Raw Memory Structure</div>
+                          <div className="feature-desc">JSON format with timestamp, conversation, and context</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <EyeOff className="feature-icon-small" style={{ color: '#fbbf24' }} />
+                        <div>
+                          <div className="feature-title">Sensitive by Default</div>
+                          <div className="feature-desc">Content is hidden until explicitly revealed</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {step === 2 && (
+                    <>
+                      <div className="feature-item">
+                        <Lock className="feature-icon-small" style={{ color: '#a78bfa' }} />
+                        <div>
+                          <div className="feature-title">AES-256-GCM</div>
+                          <div className="feature-desc">Military-grade encryption standard</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <Key className="feature-icon-small" style={{ color: '#fbbf24' }} />
+                        <div>
+                          <div className="feature-title">Unique Key Per Memory</div>
+                          <div className="feature-desc">Each memory gets its own encryption key</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {step === 3 && (
+                    <>
+                      <div className="feature-item">
+                        <Cpu className="feature-icon-small" style={{ color: '#fbbf24' }} />
+                        <div>
+                          <div className="feature-title">Hardware Isolation</div>
+                          <div className="feature-desc">Keys processed in secure enclave</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <Shield className="feature-icon-small" style={{ color: '#4ade80' }} />
+                        <div>
+                          <div className="feature-title">Attestation</div>
+                          <div className="feature-desc">Cryptographic proof of secure execution</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {step === 4 && (
+                    <>
+                      <div className="feature-item">
+                        <Database className="feature-icon-small" style={{ color: '#34d399' }} />
+                        <div>
+                          <div className="feature-title">Content Addressing</div>
+                          <div className="feature-desc">CID uniquely identifies your encrypted data</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <Globe className="feature-icon-small" style={{ color: '#22d3ee' }} />
+                        <div>
+                          <div className="feature-title">Distributed Storage</div>
+                          <div className="feature-desc">Multiple replicas across Filecoin network</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {step === 5 && (
+                    <>
+                      <div className="feature-item">
+                        <Globe className="feature-icon-small" style={{ color: '#818cf8' }} />
+                        <div>
+                          <div className="feature-title">Immutable Registry</div>
+                          <div className="feature-desc">CID hash permanently recorded on Base</div>
+                        </div>
+                      </div>
+                      <div className="feature-item">
+                        <CheckCircle className="feature-icon-small" style={{ color: '#4ade80' }} />
+                        <div>
+                          <div className="feature-title">Tamper-Proof</div>
+                          <div className="feature-desc">Blockchain guarantees data integrity</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  
+                  {step === 6 && (
+                    <div className="success-box">
+                      <div className="feature-item" style={{ background: 'transparent', padding: 0 }}>
+                        <Shield className="feature-icon-small" style={{ color: '#4ade80' }} />
+                        <div>
+                          <div className="feature-title" style={{ color: '#4ade80' }}>Security Complete</div>
+                          <div className="feature-desc">Your memory is protected by multiple layers of encryption and blockchain verification</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="stat-grid">
+                <div className="stat-card">
+                  <div className="stat-value" style={{ color: '#22d3ee' }}>256-bit</div>
+                  <div className="stat-label">Encryption Strength</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value" style={{ color: '#a78bfa' }}>0</div>
+                  <div className="stat-label">Data Breaches</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value" style={{ color: '#4ade80' }}>100%</div>
+                  <div className="stat-label">Client-Side</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value" style={{ color: '#fbbf24' }}>∞</div>
+                  <div className="stat-label">Retention</div>
+                </div>
+              </div>
+              
+              <div className="glass-card" style={{ textAlign: 'center' }}>
+                <h4 style={{ marginBottom: '8px' }}>Ready to secure your AI memories?</h4>
+                <p style={{ fontSize: '14px', color: '#9ca3af', marginBottom: '16px' }}>Start using MemoryVault Pro today</p>
+                <a href="/" style={{ textDecoration: 'none' }}>
+                  <button className="btn btn-primary" style={{ width: '100%' }}>
+                    <Lock /> Launch App
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <footer className="footer">
+            <p>MemoryVault Pro uses military-grade AES-256-GCM encryption with TEE-based key management</p>
+            <p>Your data is encrypted in your browser before being stored on Filecoin and registered on Base</p>
+          </footer>
+        </div>
+      );
+    }
+    
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

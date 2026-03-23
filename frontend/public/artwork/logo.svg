@@ -1,0 +1,81 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="50%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#d946ef"/>
+    </linearGradient>
+    
+    <linearGradient id="logoGradient2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#d946ef"/>
+      <stop offset="50%" style="stop-color:#6366f1"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+    
+    <filter id="logoGlow">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="200" rx="40" fill="#0a0a0f"/>
+  
+  <!-- Outer hexagon -->
+  <polygon 
+    points="100,20 166,55 166,120 100,155 34,120 34,55" 
+    fill="none" 
+    stroke="url(#logoGradient)" 
+    stroke-width="4"
+    filter="url(#logoGlow)"
+  />
+  
+  <!-- Inner hexagon -->
+  <polygon 
+    points="100,45 142,68 142,115 100,138 58,115 58,68" 
+    fill="rgba(99,102,241,0.1)" 
+    stroke="url(#logoGradient2)" 
+    stroke-width="2"
+  />
+  
+  <!-- Brain/memory icon in center -->
+  <g transform="translate(100, 92)" filter="url(#logoGlow)">
+    <!-- Brain outline -->
+    <path 
+      d="M-25,-15 Q-15,-30 0,-25 Q15,-30 25,-15 Q30,0 20,15 Q10,25 0,22 Q-10,25 -20,15 Q-30,0 -25,-15"
+      fill="none" 
+      stroke="url(#logoGradient)" 
+      stroke-width="2.5"
+      stroke-linecap="round"
+    />
+    
+    <!-- Neural connections -->
+    <circle cx="-12" cy="-5" r="3" fill="#6366f1"/>
+    <circle cx="12" cy="-5" r="3" fill="#06b6d4"/>
+    <circle cx="0" cy="10" r="3" fill="#d946ef"/>
+    
+    <!-- Connection lines -->
+    <line x1="-12" y1="-5" x2="12" y2="-5" stroke="url(#logoGradient)" stroke-width="1.5" opacity="0.6"/>
+    <line x1="-12" y1="-5" x2="0" y2="10" stroke="url(#logoGradient)" stroke-width="1.5" opacity="0.6"/>
+    <line x1="12" y1="-5" x2="0" y2="10" stroke="url(#logoGradient)" stroke-width="1.5" opacity="0.6"/>
+  </g>
+  
+  <!-- Decorative dots -->
+  <g opacity="0.5">
+    <circle cx="100" cy="10" r="2" fill="#6366f1">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="180" cy="87" r="2" fill="#06b6d4">
+      <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="165" r="2" fill="#d946ef">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="20" cy="87" r="2" fill="#6366f1">
+      <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+{
+  "name": "memoryvault-pro",
+  "version": "1.0.0",
+  "description": "MemoryVault Pro - Private AI Agent Memory on Blockchain",
+  "scripts": {
+    "api:install": "cd api && npm install",
+    "api:start": "cd api && npm start",
+    "api:dev": "cd api && npm run dev",
+    "api:test": "cd api && node test.js",
+    "demo": "node demo.js",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "test": "cd test && npm test",
+    "postinstall": "npm run api:install"
+  },
+  "keywords": [
+    "memoryvault",
+    "ai",
+    "blockchain",
+    "filecoin",
+    "ethereum",
+    "privacy"
+  ],
+  "author": "MemoryVault Pro Team",
+  "license": "MIT"
+}

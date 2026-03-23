@@ -1,0 +1,16 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "deployer": "0xCA5AD2cD81ff9f4eFF6f66742706D831410403e3",
+  "contracts": {
+    "MemoryAccessNFT": {
+      "address": "0xf387c90612d2086C1870cAef589E660300523aeD",
+      "transactionHash": "0x5415610dbeff9fb8a386bdd5421664fe2d38a6843452b6cc1f0733a4d4baa132"
+    },
+    "MemoryRegistry": {
+      "address": "0x7C86CE2F4B394C76c0C5c88EaE99b39AC68Abc73",
+      "transactionHash": "0xc1ff432dad06c7d3f223a9f588235538feb2b8208bd2a28f254d0e8b9608953d"
+    }
+  },
+  "timestamp": "2026-03-21T12:35:00Z"
+}

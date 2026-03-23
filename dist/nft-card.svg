@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d1b4e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff0080;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8000ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#cardBg)" rx="50"/>
+  <rect x="20" y="20" width="984" height="984" fill="none" stroke="url(#border)" stroke-width="8" rx="40"/>
+  <text x="50%" y="40%" font-family="monospace" font-size="48" fill="#ff0080" text-anchor="middle" font-weight="bold">MVAULT ACCESS</text>
+  <text x="50%" y="55%" font-family="monospace" font-size="36" fill="#ffffff" text-anchor="middle">Credential #001</text>
+  <circle cx="512" cy="750" r="80" fill="none" stroke="#ff0080" stroke-width="4"/>
+  <text x="512" y="765" font-family="monospace" font-size="24" fill="#ff0080" text-anchor="middle">🔐</text>
+</svg>
