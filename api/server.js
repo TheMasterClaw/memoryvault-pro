@@ -755,7 +755,8 @@ app.get('/v1/', (req, res) => {
       auth: ['/v1/auth', '/v1/auth/nft'],
       memories: ['/v1/memories', '/v1/memories/:id', '/v1/memories/search'],
       nft: ['/v1/nft/mint', '/v1/nft/verify/:tokenId'],
-      analytics: ['/v1/analytics/stats', '/v1/analytics/logs']
+      analytics: ['/v1/analytics/stats', '/v1/analytics/logs'],
+      agents: ['/v1/agents/register', '/v1/agents/auth', '/v1/agents/discover', '/v1/agents/session']
     }
   });
 });
@@ -765,6 +766,10 @@ app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ success: false, error: 'Internal server error' });
 });
+
+// ============ AGENT SELF-REGISTRATION ROUTES ============
+const agentRoutes = require('./agents');
+app.use('/v1/agents', agentRoutes);
 
 // 404 handler
 app.use((req, res) => {
