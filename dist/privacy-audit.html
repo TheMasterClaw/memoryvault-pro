@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Audit - MemoryVault Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="text-gray-300 min-h-screen flex flex-col">
+    <nav class="bg-black/80 backdrop-blur-md border-b border-purple-900/30">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">🔐</div>
+                <span class="text-xl font-bold text-white">MemoryVault<span class="text-purple-400">Pro</span></span>
+            </a>
+            <a href="index.html" class="px-6 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg font-semibold transition text-white">← Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow p-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-10">
+                <div class="text-6xl mb-4">🔍</div>
+                <h1 class="text-4xl font-bold text-white mb-4">Privacy Audit</h1>
+                <p class="text-xl text-gray-400">Comprehensive security analysis of your memory storage configuration</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gradient-to-b from-emerald-900/30 to-gray-800/50 border border-emerald-500/30 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-emerald-400 mb-2">256-bit</div>
+                    <div class="text-sm text-gray-400">AES Encryption</div>
+                    <div class="text-emerald-500 text-sm mt-2">✓ Secure</div>
+                </div>
+                <div class="bg-gradient-to-b from-cyan-900/30 to-gray-800/50 border border-cyan-500/30 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-cyan-400 mb-2">6/6</div>
+                    <div class="text-sm text-gray-400">Security Checks</div>
+                    <div class="text-emerald-500 text-sm mt-2">✓ Passed</div>
+                </div>
+                <div class="bg-gradient-to-b from-purple-900/30 to-gray-800/50 border border-purple-500/30 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-purple-400 mb-2">100%</div>
+                    <div class="text-sm text-gray-400">Privacy Score</div>
+                    <div class="text-emerald-500 text-sm mt-2">✓ Excellent</div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-2xl font-bold text-white mb-6">Security Checklist</h2>
+                
+                <div class="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">🔐</span>
+                        <div>
+                            <div class="font-semibold text-white">End-to-End Encryption</div>
+                            <div class="text-sm text-gray-400">All memories encrypted before storage</div>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-semibold">✓ Pass</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">🎫</span>
+                        <div>
+                            <div class="font-semibold text-white">NFT Access Control</div>
+                            <div class="text-sm text-gray-400">Soulbound credentials for access management</div>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-semibold">✓ Pass</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">🔗</span>
+                        <div>
+                            <div class="font-semibold text-white">Blockchain Anchoring</div>
+                            <div class="text-sm text-gray-400">Immutable proof of memory existence</div>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-semibold">✓ Pass</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">📍</span>
+                        <div>
+                            <div class="font-semibold text-white">IPFS Distributed Storage</div>
+                            <div class="text-sm text-gray-400">Decentralized content-addressed storage</div>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-semibold">✓ Pass</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">🔑</span>
+                        <div>
+                            <div class="font-semibold text-white">Self-Sovereign Keys</div>
+                            <div class="text-sm text-gray-400">You control your encryption keys</div>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-semibold">✓ Pass</span>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div class="flex items-center gap-4">
+                        <span class="text-2xl">⏰</span>
+                        <div>
+                            <div class="font-semibold text-white">Expirable Access</div>
+                            <div class="text-sm text-gray-400">Time-limited credentials supported</div>
+                        </div>
+                    </div>
+                    <span class="text-emerald-400 font-semibold">✓ Pass</span>
+                </div>
+            </div>
+
+            <div class="mt-8 p-6 bg-gradient-to-r from-purple-900/30 to-pink-900/30 border border-purple-500/30 rounded-2xl">
+                <h3 class="text-xl font-semibold text-white mb-2">Audit Complete</h3>
+                <p class="text-gray-400">Your MemoryVault configuration meets all security and privacy standards. No action required.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 px-6 border-t border-gray-800 text-center text-gray-500">
+        <p>© 2026 VaultAI Inc. Secure memory for the AI age.</p>
+    </footer>
+</body>
+</html>

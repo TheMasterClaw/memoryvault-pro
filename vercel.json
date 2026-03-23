@@ -3,6 +3,10 @@
   "name": "memoryvault-pro",
   "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/encryption-visualizer.html", "destination": "/encryption-visualizer.html" },
+    { "source": "/agent-coordination.html", "destination": "/agent-coordination.html" },
+    { "source": "/privacy-audit.html", "destination": "/privacy-audit.html" },
+    { "source": "/analytics.html", "destination": "/analytics.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
